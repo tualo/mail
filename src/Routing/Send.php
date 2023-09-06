@@ -13,6 +13,22 @@ class Send implements IRoute
 
     public static function register()
     {
+        BasicRoute::add('/mail/renderpug/(?P<pug_template>\w+)', function ($matches) {
+            $db = App::get('session')->getDB();
+            
+
+            try {
+                $postdata = json_decode(file_get_contents("php://input"),true);
+                if(is_null($postdata)) throw new \Exception('Payload not readable');
+
+                    App::result('data', $postdata);
+                    App::result('success', true);
+                } catch (\Exception $e) {
+                    App::result('msg', $e->getMessage());
+                }
+                App::contenttype('application/json');
+        }, ['put'], true);
+
         BasicRoute::add('/mail/send(?P<id>(\/\d*)*)', function ($matches) {
             $db = App::get('session')->getDB();
             $id = intval(str_replace('/', '', $matches['id']));
