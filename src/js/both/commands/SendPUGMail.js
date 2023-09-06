@@ -59,8 +59,22 @@ Ext.define('Tualo.cmp.mail.commands.SendPUGMail', {
       this.records = records;
       this.selectedrecords = selectedrecords;
 
+        this.fillform();
 
   
+    },
+    fillform: async function(){
+        let res = await fetch('./mail/send/renderpug',{
+            method: 'POST',
+            body: JSON.stringify(this.record.getData())
+        });
+        res = await res.json();
+        if (res.success){
+            this.getComponent('mailform').getForm().setValues(res.data);
+            this.getComponent('mailform').enable();
+            this.getComponent('waitpanel').hide();
+        }
+
     },
     getNextText: function(){
       return 'Senden';
