@@ -7,26 +7,54 @@ use Tualo\Office\Basic\TualoApplication as App;
 use Tualo\Office\Basic\Route as BasicRoute;
 use Tualo\Office\Basic\IRoute;
 use Tualo\Office\DS\DSModel;
+use Tualo\Office\DS\DSTable;
+use Tualo\Office\PUG\PUG;
 
 class Send implements IRoute
 {
 
     public static function register()
     {
-        BasicRoute::add('/mail/renderpug/(?P<pug_template>\w+)', function ($matches) {
+        BasicRoute::add('/mail/renderpug', function ($matches) {
             $db = App::get('session')->getDB();
             
-
+            /*
+            CREATE OR REPLACE VIEW `view_blg_list_angebot_mailinfo` as
+            select h.id,json_arrayagg(a.email) mail_addresses from 
+            -- 
+            blg_hdr_angebot h 
+            join blg_adressen_angebot b on h.id = b.id 
+            join adressen a on (a.kundennummer,a.kostenstelle) = (b.kundennummer,b.kostenstelle) 
+            and a.email<>''
+            group by h.id
+            */
             try {
                 $postdata = json_decode(file_get_contents("php://input"),true);
                 if(is_null($postdata)) throw new \Exception('Payload not readable');
+                
+                if (!isset($postdata['__sendmail_template'])) throw new \Exception('Template not set');
+                if (!isset($postdata['__sendmail_info'])) throw new \Exception('Info not set');
+                $template=$postdata['__sendmail_template'];
+                
 
-                    App::result('data', $postdata);
-                    App::result('success', true);
-                } catch (\Exception $e) {
-                    App::result('msg', $e->getMessage());
-                }
-                App::contenttype('application/json');
+                $infotable = new DSTable($db,$postdata['__sendmail_info']);
+                foreach($postdata as $key => $value) $infotable->filter($key,'=',$value);
+                    
+                $infotable->limit(1)->read();
+                App::result('info', $infotable->get());
+                PUG::exportPUG($db);
+                $html = PUG::render($template,$postdata);
+                App::result('postdata', $postdata);
+                App::result('data', [
+                    'mailbody' => $html,
+                ]);
+
+                App::result('html', $html);
+                App::result('success', true);
+            } catch (\Exception $e) {
+                App::result('msg', $e->getMessage());
+            }
+            App::contenttype('application/json');
         }, ['put'], true);
 
         BasicRoute::add('/mail/send(?P<id>(\/\d*)*)', function ($matches) {

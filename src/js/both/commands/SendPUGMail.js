@@ -7,12 +7,22 @@ Ext.define('Tualo.cmp.mail.commands.SendPUGMail', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.sendpugmail',
     layout: 'fit',
+    viewModel: {
+        data: {
+            messagetitle: '',
+            messagetext: ''
+        }
+    },
     items: [
       {
         xtype: 'form',
         itemId: 'mailform',
         bodyPadding: '25px',
         scrollable: 'y',
+        defaults: {
+            labelWidth: 150,
+            anchor: '100%'
+        },
         disabled: true,
         items: [
             {
@@ -38,6 +48,39 @@ Ext.define('Tualo.cmp.mail.commands.SendPUGMail', {
       },{
         hidden: true,
         xtype: 'panel',
+        itemId: 'messagepanel',
+        layout:{
+          type: 'vbox',
+          align: 'center'
+        },
+        items: [
+          {
+            xtype: 'component',
+            style:{
+                backrgoundColor: '#8acdeb'
+            },
+            cls: 'lds-container',
+            html: '<div id="container">'+
+            '<div class="steam" id="steam1"> </div>'+
+            '<div class="steam" id="steam2"> </div>'+
+            '<div class="steam" id="steam3"> </div>'+
+            '<div class="steam" id="steam4"> </div>'+
+            '<div id="cup">'+
+              '<div id="cup-body">'+
+              '<div id="cup-shade"></div>'+
+                '</div>'+
+              '<div id="cup-handle"></div>'+
+              '</div>'+
+            '<div id="saucer"></div>'+
+            '<div id="shadow"></div>'+
+            '</div>'+
+            '<div><h3>{messagetitle}</h3>'+
+            '<span>{messagetext}</span></div>'
+          }
+        ]
+      },{
+        hidden: true,
+        xtype: 'panel',
         itemId: 'waitpanel',
         layout:{
           type: 'vbox',
@@ -58,14 +101,17 @@ Ext.define('Tualo.cmp.mail.commands.SendPUGMail', {
       this.record = record;
       this.records = records;
       this.selectedrecords = selectedrecords;
-
-        this.fillform();
-
-  
+      if(typeof this.record.get('__sendmail_info')=='undefined'){
+        me.getComponent('syncform').hide();
+        me.getComponent('waitpanel').hide();
+        me.getComponent('messagepanel').show();
+        return;
+      }
+      this.fillform();
     },
     fillform: async function(){
-        let res = await fetch('./mail/send/renderpug',{
-            method: 'POST',
+        let res = await fetch('./mail/renderpug',{
+            method: 'PUT',
             body: JSON.stringify(this.record.getData())
         });
         res = await res.json();
