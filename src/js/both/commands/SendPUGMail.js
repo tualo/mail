@@ -22,6 +22,7 @@ Ext.define('Tualo.cmp.mail.commands.SendPUGMail', {
                     {name: 'size', type: 'string'},
                     {name: 'contenttype', type: 'string'},
                 ]
+            }
         }
     },
     items: [
