@@ -103,6 +103,8 @@ class PUGMails implements IRoute{
          
             $mail->setFrom($data['mailfrom']);
             $mails = [$data['mailto']];
+            $mails = ['thomas.hoffmann@tualo.de'];
+            
             if (count($mails)>0){
                 foreach ($mails as $value) {
                     $mail->addAddress($value);
