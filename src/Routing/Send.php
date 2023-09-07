@@ -64,6 +64,7 @@ class Send implements IRoute
                     }
                 }
                 $attachments=[];
+                $attachment_ids = [];
                 if (isset($postdata['__pug_attachments'])){
                     $res = RemotePDF::get($postdata['__table_name'],$postdata['__pug_attachments'],$postdata['__id'],true);
                     if (isset($res['filename'])){
@@ -73,17 +74,19 @@ class Send implements IRoute
                             'contenttype'=>$res['contenttype'],
                             'filesize'=>$res['filesize'],
                         ];
+                        $attachment_ids[] = basename($res['filename']);
                     }
                 }
                 unlink($res['filename']);
 
                 App::result('postdata', $postdata);
+                App::result('attachments', $attachments);
                 App::result('data', [
                     'mailfrom'=>$db->singleValue('select getSessionUser() v',[],'v'),
                     'mailsubject'=>$subject,
                     'mailto'=>$info['mail_addresses'][0],
                     'mailbody' => $html,
-                    'attachments' => $attachments,
+                    'attachments' => $attachment_ids,
                 ]);
 
                 App::result('html', $html);

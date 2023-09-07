@@ -10,7 +10,18 @@ Ext.define('Tualo.cmp.mail.commands.SendPUGMail', {
     viewModel: {
         data: {
             messagetitle: '',
-            messagetext: ''
+            messagetext: '',
+        },
+        stores: {
+            attachments: {
+                type: 'array',
+                data: [],
+                fields: [
+                    {name: 'filename', type: 'string'},
+                    {name: 'title', type: 'string'},
+                    {name: 'size', type: 'string'},
+                    {name: 'contenttype', type: 'string'},
+                ]
         }
     },
     items: [
@@ -44,6 +55,17 @@ Ext.define('Tualo.cmp.mail.commands.SendPUGMail', {
                 fieldLabel: 'Text',
                 xtype: 'htmleditor',
                 name: 'mailbody'
+            },
+            {
+                xtype: 'tagfield',
+                fieldLabel: 'Anhänge',
+                bind: {
+                    store: '{attachments}',
+                },
+                displayField: 'title',
+                valueField: 'filename',
+                queryMode: 'local',
+                filterPickList: true
             }
         ]
       },{
@@ -117,6 +139,8 @@ Ext.define('Tualo.cmp.mail.commands.SendPUGMail', {
         });
         res = await res.json();
         if (res.success){
+            this.getViewModel().getStore('attachments').setData(res.attachments);
+
             this.getComponent('mailform').getForm().setValues(res.data);
             this.getComponent('mailform').enable();
             this.getComponent('waitpanel').hide();
