@@ -11,8 +11,7 @@ use Tualo\Office\DS\DSTable;
 use Tualo\Office\PUG\PUG;
 use Tualo\Office\RemoteBrowser\RemotePDF;
 use DOMDocument;
-use PHPMailer\PHPMailer\PHPMailer;
-
+use Tualo\Office\Mail\SMTP;
 class PUGMails implements IRoute{
     public static function register()
     {
@@ -76,7 +75,7 @@ class PUGMails implements IRoute{
                         $attachment_ids[] = basename($res['filename']);
                     }
                 }
-                unlink($res['filename']);
+                // unlink($res['filename']);
 
                 App::result('postdata', $postdata);
                 App::result('attachments', $attachments);
@@ -97,108 +96,33 @@ class PUGMails implements IRoute{
         }, ['put'], true);
 
         BasicRoute::add('/mail/sendpug', function ($matches) {
-
-            $mail = new PHPMailer(true);
-            $mail->Debugoutput="error_log";
+            $data = json_decode(file_get_contents("php://input"),true);
+            if(is_null($data)) throw new \Exception('Payload not readable');
             
-            $mail->SMTPDebug =  SMTP::DEBUG_SERVER;
-            $mail->CharSet = "utf-8";
-        
-            $mail->isSMTP();                                      // Set mailer to use SMTP
-            $mail->Host = $this->getCMPSetup('cmp_mail','SMTP_HOST');  // Specify main and backup SMTP servers
-            $mail->SMTPAuth = true;                               // Enable SMTP authentication
-            $mail->Username = $this->getCMPSetup('cmp_mail','SMTP_USER');             // SMTP username
-            $mail->Password = $this->getCMPSetup('cmp_mail','SMTP_PASS');                           // SMTP password
-            $secure = $this->getCMPSetup('cmp_mail','SMTP_SECURE');
-
-            if ($secure==''){
-                $mail->SMTPSecure = false;                            // Enable TLS encryption, `ssl` also accepted
-            }else{
-                $mail->SMTPSecure = $secure;                            // Enable TLS encryption, `ssl` also accepted
-            }
-            $mail->Port = 587;                                    // TCP port to connect to
-        
-            if ($this->getCMPSetup('cmp_mail','SMTP_NO_AUTOTLS')=='1'){
-                $mail->SMTPAutoTLS = false;
-            }
-        
-            if ($this->getCMPSetup('cmp_mail','SMTP_NO_CERT_CHECK')=='1'){
-                $mail->SMTPOptions = array(
-                    'ssl' => array(
-                        'verify_peer' => false,
-                        'verify_peer_name' => false,
-                        'allow_self_signed' => true
-                    )
-                );
-            }
-        
-            
-            $mail->setFrom($item->get('send_from'),$item->get('send_from_name'));
-            $mails = explode(';',$item->get('send_to'));
+            $mail =SMTP::get();
+         
+            $mail->setFrom($data['mailfrom']);
+            $mails = [$data['mailto']];
             if (count($mails)>0){
                 foreach ($mails as $value) {
                     $mail->addAddress($value);
                 }
             }
         
-            $mail->addReplyTo($item->get('reply_to'),$item->get('reply_to_name'));
-        
-            if ($item->get('attachment_file')!=''){
-                //echo $item->get('attachment_file'); exit();
-                if (file_exists( App::get("tempPath").'/'.$item->get('attachment_file') )){
-                    $name = basename($item->get('attachment_file'));
-                    $mail->addAttachment( App::get("tempPath").'/'.$item->get('attachment_file') ,$name);
-                }else{
-                    parse_str($item->get('attachment_file'), $output);
-                    if (isset($output['cmp'])){
-                        foreach ($output as $key => $value) {
-                            if ($key!='sid'){
-                                $_REQUEST[$key]=$value;
-                            }
-                        }
-                
-                        ob_start();
-                            include App::get("basePath") . '/cmp/' .$output['cmp'].'/'.$output['cmp'].'.php';
-                            $json = json_decode( ob_get_contents(), true );
-                        ob_end_clean();
-                
-                        if (!is_null($json)){
-                            if (isset($json['file'])){
-                                $name = basename($json['file']);
-                                $mail->addAttachment( App::get("tempPath") . '/'.$json['file'],$name);
-                            }
-                        }
-                
-                    }
-                }
+            // $mail->addReplyTo($item->get('reply_to'),$item->get('reply_to_name'));
+            foreach($data['attachments'] as $attachment){
+                if(file_exists(App::get("tempPath").'/'.$attachment))
+                $mail->addAttachment( App::get("tempPath").'/'.$attachment,$attachment);
             }
-        
-            $mail->Subject = $item->get('subject');
-            $mail->Body    = $item->get('body');
+            
+            $mail->isHtml(true);
+            $mail->Subject = $data['mailsubject'];
+            $mail->Body    = $data['mailbody'];
         
             if(!$mail->send()) {
                 throw new \Exception($mail->ErrorInfo);
-            } else {
-                $this->db->execute_with_hash('update outgoing_mails set  send_date=now() where id={id}',['id'=>$item->get('id')]);
             }
             
-            $mail = new PHPMailer();
-            $mail->CharSet = "UTF-8";
-            $mail->setFrom("john@example.com", "John Doe");
-            $mail->addAddress("jane@example.com", "Jane Doe");
-            $mail->Subject = "Subject";
-
-            $mail->isHtml(true);
-            $mail->AddEmbeddedImage('top.jpg', 'TBP', 'top.jpg');
-            $mail->Body = $html;
-            //$mail->AltBody = "";
-
-            if ($mail->Send()) {
-            echo 'OK';
-            }
-            else {
-            echo 'Error!' . $mail->ErrorInfo;
-            }
         }, ['put'], true);
     }
 }
