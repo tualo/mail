@@ -41,7 +41,7 @@ Ext.define('Tualo.cmp.mail.commands.SendPUGMail', {
                 name: 'mailsubject'
             },
             {
-                xtype: 'textarea',
+                xtype: 'htmleditor',
                 name: 'mailbody'
             }
         ]

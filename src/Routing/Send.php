@@ -9,6 +9,7 @@ use Tualo\Office\Basic\IRoute;
 use Tualo\Office\DS\DSModel;
 use Tualo\Office\DS\DSTable;
 use Tualo\Office\PUG\PUG;
+use DOMDocument;
 
 class Send implements IRoute
 {
@@ -46,9 +47,22 @@ class Send implements IRoute
                 $info['mail_addresses']=json_decode($info['mail_addresses'],true);
                 App::result('info', $info);
                 PUG::exportPUG($db);
+
                 $html = PUG::render($template,$postdata);
+
+                $subject = '';
+                $dom = new DOMDocument();
+
+                if($dom->loadHTML($html)) {
+                    $list = $dom->getElementsByTagName("title");
+                    if ($list->length > 0) {
+                        $subject = $list->item(0)->textContent;
+                    }
+                }
+
                 App::result('postdata', $postdata);
                 App::result('data', [
+                    'mailsubject'=>$subject,
                     'mailto'=>$info['mail_addresses'][0],
                     'mailbody' => $html,
                 ]);
