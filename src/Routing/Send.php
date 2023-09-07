@@ -68,13 +68,14 @@ class Send implements IRoute
                     $res = RemotePDF::get($postdata['__table_name'],$postdata['__pug_attachments'],$postdata['__id'],true);
                     if (isset($res['filename'])){
                         $attachments[] = [
-                            'filename'=>$res['filename'],
+                            'filename'=>basename($res['filename']),
                             'title'=>$res['title'],
                             'contenttype'=>$res['contenttype'],
                             'filesize'=>$res['filesize'],
                         ];
                     }
                 }
+                unlink($res['filename']);
 
                 App::result('postdata', $postdata);
                 App::result('data', [
