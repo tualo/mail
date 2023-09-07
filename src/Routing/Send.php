@@ -61,8 +61,8 @@ class Send implements IRoute
                     }
                 }
                 $attachments=[];
-                if (!isset($postdata['__pug_attachments'])){
-                    $res = RemotePDF::get($postdata['__table_name'],$postdata['__sendmail_template'],$postdata['__id'],true);
+                if (isset($postdata['__pug_attachments'])){
+                    $res = RemotePDF::get($postdata['__table_name'],$postdata['__pug_attachments'],$postdata['__id'],true);
                     if (isset($res['filename'])){
                         $attachments[] = [
                             'filename'=>$res['filename'],
