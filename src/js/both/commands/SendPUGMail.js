@@ -35,6 +35,10 @@ Ext.define('Tualo.cmp.mail.commands.SendPUGMail', {
             labelWidth: 150,
             anchor: '100%'
         },
+        layout: {
+            type: 'vbox',
+            align: 'stretch'
+        },
         disabled: true,
         items: [
             {
@@ -54,6 +58,7 @@ Ext.define('Tualo.cmp.mail.commands.SendPUGMail', {
             },
             {
                 fieldLabel: 'Text',
+                flex: 1,
                 xtype: 'htmleditor',
                 name: 'mailbody'
             },
