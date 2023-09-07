@@ -79,6 +79,7 @@ class Send implements IRoute
 
                 App::result('postdata', $postdata);
                 App::result('data', [
+                    'mailfrom'=>$db->singleValue('select getSessionUser() v',[],'v'),
                     'mailsubject'=>$subject,
                     'mailto'=>$info['mail_addresses'][0],
                     'mailbody' => $html,
