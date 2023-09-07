@@ -31,6 +31,9 @@ class Send implements IRoute
             group by h.id
             */
             try {
+
+                App::set("pugCachePath", App::get("basePath").'/cache/'.$db->dbname.'/cache' );
+
                 $postdata = json_decode(file_get_contents("php://input"),true);
                 if(is_null($postdata)) throw new \Exception('Payload not readable');
                 
