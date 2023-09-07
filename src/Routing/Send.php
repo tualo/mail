@@ -41,11 +41,15 @@ class Send implements IRoute
                 foreach($postdata as $key => $value) $infotable->filter($key,'=',$value);
                     
                 $infotable->limit(1)->read();
-                App::result('info', $infotable->get());
+                if ($infotable->empty()) throw new \Exception('Info not found');
+                $info = $infotable->getSingle();
+                $info['mail_addresses']=json_decode($info['mail_addresses'],true);
+                App::result('info', $info);
                 PUG::exportPUG($db);
                 $html = PUG::render($template,$postdata);
                 App::result('postdata', $postdata);
                 App::result('data', [
+                    'mailto'=>$info['mail_addresses'][0],
                     'mailbody' => $html,
                 ]);
 
