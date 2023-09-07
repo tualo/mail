@@ -28,19 +28,20 @@ Ext.define('Tualo.cmp.mail.commands.SendPUGMail', {
             {
                 xtype: 'textfield',
                 name: 'mailfrom',
-                label: 'Von',
+                fieldLabel: 'Von',
             },
             {
                 xtype: 'textfield',
                 name: 'mailto',
-                label: 'An'
+                fieldLabel: 'An'
             },
             {
                 xtype: 'textfield',
-                label: 'Betreff',
+                fieldLabel: 'Betreff',
                 name: 'mailsubject'
             },
             {
+                fieldLabel: 'Text',
                 xtype: 'htmleditor',
                 name: 'mailbody'
             }
