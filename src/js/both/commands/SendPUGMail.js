@@ -65,6 +65,7 @@ Ext.define('Tualo.cmp.mail.commands.SendPUGMail', {
             {
                 xtype: 'tagfield',
                 fieldLabel: 'Anhänge',
+                name: 'attachments',
                 bind: {
                     store: '{attachments}',
                 },
