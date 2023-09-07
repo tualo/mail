@@ -9,6 +9,7 @@ use Tualo\Office\Basic\IRoute;
 use Tualo\Office\DS\DSModel;
 use Tualo\Office\DS\DSTable;
 use Tualo\Office\PUG\PUG;
+use Tualo\Office\RemoteBrowser\RemotePDF;
 use DOMDocument;
 
 class Send implements IRoute
@@ -59,12 +60,25 @@ class Send implements IRoute
                         $subject = $list->item(0)->textContent;
                     }
                 }
+                $attachments=[];
+                if (!isset($postdata['__pug_attachments'])){
+                    $res = RemotePDF::get($matches['tablename'],$matches['template'],$matches['id'],true);
+                    if (isset($res['filename'])){
+                        $attachments[] = [
+                            'filename'=>$res['filename'],
+                            'title'=>$res['title'],
+                            'contenttype'=>$res['contenttype'],
+                            'filesize'=>$res['filesize'],
+                        ];
+                    }
+                }
 
                 App::result('postdata', $postdata);
                 App::result('data', [
                     'mailsubject'=>$subject,
                     'mailto'=>$info['mail_addresses'][0],
                     'mailbody' => $html,
+                    'attachments' => $attachments,
                 ]);
 
                 App::result('html', $html);
