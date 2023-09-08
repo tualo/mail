@@ -102,8 +102,8 @@ class PUGMails implements IRoute{
             $mail =SMTP::get();
          
             $mail->setFrom($data['mailfrom']);
-            $mails = [$data['mailto']];
-            $mails = ['thomas.hoffmann@tualo.de'];
+            $mails = [App::configuration('mail','force_mail_to',$data['mailto'])];
+            
             
             if (count($mails)>0){
                 foreach ($mails as $value) {
@@ -121,6 +121,8 @@ class PUGMails implements IRoute{
             $mail->Subject = $data['mailsubject'];
             $mail->Body    = $data['mailbody'];
         
+            print_r($mails); exit();
+
             if(!$mail->send()) {
                 throw new \Exception($mail->ErrorInfo);
             }
