@@ -93,7 +93,7 @@ class PUGMails implements IRoute{
                 App::result('msg', $e->getMessage());
             }
             App::contenttype('application/json');
-        }, ['PUT','post'], true);
+        }, ['put'], true);
 
         BasicRoute::add('/mail/sendpug', function ($matches) {
             $data = json_decode(file_get_contents("php://input"),true);

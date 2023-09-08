@@ -141,7 +141,7 @@ Ext.define('Tualo.cmp.mail.commands.SendPUGMail', {
     },
     fillform: async function(){
         let res = await fetch('./mail/renderpug',{
-            method: 'post',
+            method: 'put',
             body: JSON.stringify(this.record.getData())
         });
         res = await res.json();
@@ -162,7 +162,7 @@ Ext.define('Tualo.cmp.mail.commands.SendPUGMail', {
       me.getComponent('syncform').hide();
       me.getComponent('waitpanel').show();
       let res= await Tualo.Fetch.post('./mail/sendpug',{
-        method: 'post',
+        method: 'put',
         body: JSON.stringify(this.getComponent('mailform').getForm().getValues())
       });
       if (res.success !== true){
