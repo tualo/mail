@@ -159,7 +159,7 @@ Ext.define('Tualo.cmp.mail.commands.SendPUGMail', {
     },
     run: async function(){
       let me = this;
-      me.getComponent('syncform').hide();
+      me.getComponent('messagepanel').hide();
       me.getComponent('waitpanel').show();
       let res= await Tualo.Fetch.post('./mail/sendpug',{
         method: 'put',
