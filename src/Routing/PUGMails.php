@@ -96,37 +96,42 @@ class PUGMails implements IRoute{
         }, ['put'], true);
 
         BasicRoute::add('/mail/sendpug', function ($matches) {
-            $data = json_decode(file_get_contents("php://input"),true);
-            if(is_null($data)) throw new \Exception('Payload not readable');
+            App::contenttype('application/json');
+            try{
+                $data = json_decode(file_get_contents("php://input"),true);
+                if(is_null($data)) throw new \Exception('Payload not readable');
+                
+                $mail =SMTP::get();
             
-            $mail =SMTP::get();
-         
-            $mail->setFrom($data['mailfrom']);
-            $mails = [App::configuration('mail','force_mail_to',$data['mailto'])];
-            
-            
-            if (count($mails)>0){
-                foreach ($mails as $value) {
-                    $mail->addAddress($value);
+                $mail->setFrom($data['mailfrom']);
+                $mails = [App::configuration('mail','force_mail_to',$data['mailto'])];
+                
+                
+                if (count($mails)>0){
+                    foreach ($mails as $value) {
+                        $mail->addAddress($value);
+                    }
                 }
-            }
-        
-            // $mail->addReplyTo($item->get('reply_to'),$item->get('reply_to_name'));
-            foreach($data['attachments'] as $attachment){
-                if(file_exists(App::get("tempPath").'/'.$attachment))
-                $mail->addAttachment( App::get("tempPath").'/'.$attachment,$attachment);
-            }
             
-            $mail->isHtml(true);
-            $mail->Subject = $data['mailsubject'];
-            $mail->Body    = $data['mailbody'];
-        
-            print_r($mails); exit();
+                // $mail->addReplyTo($item->get('reply_to'),$item->get('reply_to_name'));
+                foreach($data['attachments'] as $attachment){
+                    if(file_exists(App::get("tempPath").'/'.$attachment))
+                    $mail->addAttachment( App::get("tempPath").'/'.$attachment,$attachment);
+                }
+                
+                $mail->isHtml(true);
+                $mail->Subject = $data['mailsubject'];
+                $mail->Body    = $data['mailbody'];
+            
+                print_r($mails); exit();
 
-            if(!$mail->send()) {
-                throw new \Exception($mail->ErrorInfo);
+                if(!$mail->send()) {
+                    throw new \Exception($mail->ErrorInfo);
+                }
+                App::result('success', true);
+            } catch (\Exception $e) {
+                App::result('msg', $e->getMessage());
             }
-            
         }, ['put'], true);
     }
 }
