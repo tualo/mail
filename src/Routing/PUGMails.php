@@ -133,6 +133,6 @@ class PUGMails implements IRoute{
                 App::contenttype('application/json');
                 App::result('msg', $e->getMessage());
             }
-        }, ['put'], true);
+        }, ['put','post'], true);
     }
 }
