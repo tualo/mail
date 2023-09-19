@@ -98,6 +98,7 @@ class PUGMails implements IRoute{
         BasicRoute::add('/mail/sendpug', function ($matches) {
             App::contenttype('application/json');
             try{
+                $db = App::get('session')->getDB();
                 $data = json_decode(file_get_contents("php://input"),true);
                 if(is_null($data)) throw new \Exception('Payload not readable');
                 if(!isset($data['mailfrom'])) throw new \Exception('Mailfrom not set');
@@ -130,11 +131,20 @@ class PUGMails implements IRoute{
                 $mail->Subject = $data['mailsubject'];
                 $mail->Body    = $data['mailbody'];
             
-                App::result('break',$mails); new \Exception("break");
-
+                
                 if(!$mail->send()) {
                     throw new \Exception($mail->ErrorInfo);
                 }
+
+                if(isset($data['mail_record'])){
+                    if(isset($data['mail_record']['__sendmail_callback'])){
+                        $db->direct('set @r = {r}',[
+                            'r'=>json_encode($data['mail_record'])
+                        ]);
+                        $db->direct('call `'.$data['mail_record']['__sendmail_callback'].'`(@r)');
+                    }
+                }
+
                 App::result('success', true);
             } catch (\Exception $e) {
                 App::contenttype('application/json');
