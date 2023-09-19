@@ -100,6 +100,11 @@ class PUGMails implements IRoute{
             try{
                 $data = json_decode(file_get_contents("php://input"),true);
                 if(is_null($data)) throw new \Exception('Payload not readable');
+                if(!isset($data['mailfrom'])) throw new \Exception('Mailfrom not set');
+                if(!isset($data['mailto'])) throw new \Exception('Mailto not set');
+                if(!isset($data['mailsubject'])) throw new \Exception('Mailsubject not set');
+                if(!isset($data['mailbody'])) throw new \Exception('Mailbody not set');
+
                 
                 $mail =SMTP::get();
             
@@ -114,9 +119,11 @@ class PUGMails implements IRoute{
                 }
             
                 // $mail->addReplyTo($item->get('reply_to'),$item->get('reply_to_name'));
-                foreach($data['attachments'] as $attachment){
-                    if(file_exists(App::get("tempPath").'/'.$attachment))
-                    $mail->addAttachment( App::get("tempPath").'/'.$attachment,$attachment);
+                if(isset($data['attachments'])){
+                    foreach($data['attachments'] as $attachment){
+                        if(file_exists(App::get("tempPath").'/'.$attachment))
+                        $mail->addAttachment( App::get("tempPath").'/'.$attachment,$attachment);
+                    }
                 }
                 
                 $mail->isHtml(true);
