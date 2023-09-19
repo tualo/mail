@@ -163,7 +163,8 @@ Ext.define('Tualo.cmp.mail.commands.SendPUGMail', {
       me.getComponent('waitpanel').show();
       let res= await fetch('./mail/sendpug',{
         method: 'put',
-        body: JSON.stringify(this.getComponent('mailform').getForm().getValues())
+        body: '{        }'
+        // JSON.stringify(this.getComponent('mailform').getForm().getValues())
       });
       if (res.success !== true){
         Ext.toast({

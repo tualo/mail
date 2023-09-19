@@ -123,13 +123,14 @@ class PUGMails implements IRoute{
                 $mail->Subject = $data['mailsubject'];
                 $mail->Body    = $data['mailbody'];
             
-                print_r($mails); exit();
+                App::result('break',$mails); new \Exception("break");
 
                 if(!$mail->send()) {
                     throw new \Exception($mail->ErrorInfo);
                 }
                 App::result('success', true);
             } catch (\Exception $e) {
+                App::contenttype('application/json');
                 App::result('msg', $e->getMessage());
             }
         }, ['put'], true);
