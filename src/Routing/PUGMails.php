@@ -139,7 +139,7 @@ class PUGMails implements IRoute{
                 if(isset($data['mail_record'])){
                     if(isset($data['mail_record']['__sendmail_callback'])){
                         $db->direct('set @r = {r}',[
-                            'r'=>json_encode($data['mail_record'])
+                            'r'=>json_encode($_REQUEST)
                         ]);
                         $db->direct('call `'.$data['mail_record']['__sendmail_callback'].'`(@r)');
                     }
