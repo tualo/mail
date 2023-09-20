@@ -110,7 +110,7 @@ class PUGMails implements IRoute{
                 $mail =SMTP::get();
             
                 $mail->setFrom(App::configuration('mail','force_mail_from',$data['mailfrom']));
-                $mails = [App::configuration('mail','force_mail_to',$data['mailto'])];
+                $mails = explode(';',App::configuration('mail','force_mail_to',$data['mailto']));
                 
                 
                 if (count($mails)>0){
