@@ -138,6 +138,8 @@ class PUGMails implements IRoute{
 
                 if(isset($data['mail_record'])){
                     if(isset($data['mail_record']['__sendmail_callback'])){
+                        $r = $_REQUEST;
+                        unset($r['mailbody']); // kann zu json problemen führen
                         $db->direct('set @r = {r}',[
                             'r'=>json_encode($_REQUEST)
                         ]);
