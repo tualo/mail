@@ -132,6 +132,7 @@ Ext.define('Tualo.cmp.mail.commands.SendPUGMail', {
       this.records = records;
       this.selectedrecords = selectedrecords;
 
+      console.log('disableNext');
       this.fireEvent ( 'disableNext' ,true);
 
       if(typeof this.record.get('__sendmail_info')=='undefined'){
@@ -155,6 +156,7 @@ Ext.define('Tualo.cmp.mail.commands.SendPUGMail', {
             this.getComponent('mailform').enable();
             this.getComponent('waitpanel').hide();
 
+            console.log('enableNext');
             this.fireEvent ( 'enableNext' ,true);
         }
 
