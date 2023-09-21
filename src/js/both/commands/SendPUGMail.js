@@ -131,6 +131,10 @@ Ext.define('Tualo.cmp.mail.commands.SendPUGMail', {
       this.record = record;
       this.records = records;
       this.selectedrecords = selectedrecords;
+
+      this.up('lazy_ds_defered_command').getViewModel().set('enableNext',false);
+      //  me.getViewModel().set('nextButtonText',me.c.getNextText());
+
       if(typeof this.record.get('__sendmail_info')=='undefined'){
         me.getComponent('syncform').hide();
         me.getComponent('waitpanel').hide();
@@ -151,6 +155,8 @@ Ext.define('Tualo.cmp.mail.commands.SendPUGMail', {
             this.getComponent('mailform').getForm().setValues(res.data);
             this.getComponent('mailform').enable();
             this.getComponent('waitpanel').hide();
+
+            this.up('lazy_ds_defered_command').getViewModel().set('enableNext',true);
         }
 
     },
