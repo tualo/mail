@@ -63,7 +63,8 @@ class PUGMails implements IRoute{
                 }
                 $attachments=[];
                 $attachment_ids = [];
-                if (isset($postdata['__pug_attachments'])){
+                if (isset($postdata['__pug_attachments']) && $postdata['__pug_attachments']!=''){
+
                     $res = RemotePDF::get($postdata['__table_name'],$postdata['__pug_attachments'],$postdata['__id'],true);
                     if (isset($res['filename'])){
                         $attachments[] = [
@@ -74,6 +75,35 @@ class PUGMails implements IRoute{
                         ];
                         $attachment_ids[] = basename($res['filename']);
                     }
+                }
+
+
+                if (isset($postdata['__ds_files_attachments'])){
+
+                    foreach($postdata['__ds_files_attachments'] as $file_id){
+                        $sql = 'select 
+                        ds_files.file_id,
+                        ds_files.name,
+                        ds_files_data.data
+                        from ds_files
+                        join ds_files_data
+                        on ds_files.file_id = ds_files_data.file_id';
+                        $res = $db->singleRow($sql,['file_id'=>$file_id]);
+                        if (isset($res['data'])){
+                            list($mime,$data) = explode(',',$res['data']);
+                            $attachments[] = [
+                                'filename'=>$res['name'],
+                                'title'=>$res['name'],
+                                'contenttype'=>$mime,
+                                'filesize'=>strlen($data),
+                            ];
+                            $attachment_ids[] = $res['file_id'];
+                            file_put_contents(App::get("tempPath").'/'.$res['file_id'],base64_decode($data));
+                        }
+
+
+                    }
+
                 }
                 // unlink($res['filename']);
 
