@@ -79,6 +79,9 @@ class PUGMails implements IRoute{
 
 
                 if (isset($postdata['__ds_files_attachments'])){
+                    if (is_string($postdata['__ds_files_attachments'])){
+                        $postdata['__ds_files_attachments'] = json_decode($postdata['__ds_files_attachments'],true);
+                    }
 
                     foreach($postdata['__ds_files_attachments'] as $file_id){
                         $sql = 'select 
