@@ -154,7 +154,6 @@ class PUGMails implements IRoute{
             
                 // $mail->addReplyTo($item->get('reply_to'),$item->get('reply_to_name'));
                 if (isset($data['attachments'])&&($data['attachments']!='')){
-
                     foreach($data['attachments'] as $attachment){
                         if(file_exists(App::get("tempPath").'/'.$attachment))
                         $mail->addAttachment( App::get("tempPath").'/'.$attachment,$attachment);
