@@ -41,7 +41,17 @@ class PUGMails implements IRoute{
                 
 
                 $infotable = new DSTable($db,$postdata['__sendmail_info']);
-                foreach($postdata as $key => $value) $infotable->filter($key,'=',$value);
+
+                if (!isset($postdata['__sendmail_filterfields'])){
+                    $f=[];
+                    foreach($postdata as $key => $value) $f[] = $key;
+                    $postdata['__sendmail_filterfields'] = implode(',',$f);
+                }
+                $postdata['__sendmail_filterfields'] = explode(',',$postdata['__sendmail_filterfields']);
+                foreach($postdata as $key => $value) {
+                    if (in_array($key,$postdata['__sendmail_filterfields']))
+                    $infotable->filter($key,'=',$value);
+                }
                     
                 $infotable->limit(1)->read();
                 if ($infotable->empty()) throw new \Exception('Info not found');

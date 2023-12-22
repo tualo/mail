@@ -158,6 +158,13 @@ Ext.define('Tualo.cmp.mail.commands.SendPUGMail', {
 
             console.log('enableNext');
             this.fireEvent ( 'enableNext' ,true);
+        }else{
+          Ext.toast({
+              html: res.msg,
+              title: 'Fehler',
+              align: 't',
+              iconCls: 'fa fa-warning'
+          });
         }
 
     },
