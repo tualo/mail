@@ -18,6 +18,6 @@
     "minimum-stability": "dev",
     "require": {
         "phpmailer/phpmailer": "*",
-        "microsoft/microsoft-graph": "*"
+        "microsoft/microsoft-graph": "^2.0.3"
     }
 }
