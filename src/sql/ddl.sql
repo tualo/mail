@@ -1,3 +1,4 @@
+delimiter ; 
 create table if not exists `mail_config` (
     `id` varchar(36) NOT NULL DEFAULT '',
     `smtp_host` varchar(255) NOT NULL,
