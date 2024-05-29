@@ -44,6 +44,7 @@ Ext.define('Tualo.cmp.mail.commands.SendPUGMail', {
             {
                 xtype: 'textfield',
                 name: 'mailfrom',
+                itemId: 'mailfrom',
                 fieldLabel: 'Von',
             },
             {
@@ -65,6 +66,7 @@ Ext.define('Tualo.cmp.mail.commands.SendPUGMail', {
             {
                 xtype: 'tagfield',
                 fieldLabel: 'Anhänge',
+                itemId: 'attachments',
                 name: 'attachments',
                 bind: {
                     store: '{attachments}',
