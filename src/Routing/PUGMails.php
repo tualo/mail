@@ -52,6 +52,7 @@ class PUGMails implements IRoute{
                     if (in_array($key,$postdata['__sendmail_filterfields']))
                     $infotable->filter($key,'=',$value);
                 }
+
                     
                 $infotable->limit(1)->read();
                 if ($infotable->empty()) throw new \Exception('Info not found');
@@ -119,7 +120,19 @@ class PUGMails implements IRoute{
 
                 }
                 // unlink($res['filename']);
-
+                if (isset($info['_hint_message'])){
+                    App::result('_hint_message', $info['_hint_message']);
+                }
+                if (isset($info['_form_editable'])){
+                    App::result('_form_editable', $info['_form_editable']==1);
+                }
+                if (isset($info['_form_hide_from'])){
+                    App::result('_form_hide_from', $info['_form_hide_from']==1);
+                }
+                if (isset($info['_form_hide_attachments'])){
+                    App::result('_form_hide_attachments', $info['_form_hide_attachments']==1);
+                }
+               
                 App::result('postdata', $postdata);
                 App::result('attachments', $attachments);
                 App::result('data', [

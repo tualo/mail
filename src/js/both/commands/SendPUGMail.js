@@ -150,6 +150,24 @@ Ext.define('Tualo.cmp.mail.commands.SendPUGMail', {
         });
         res = await res.json();
         if (res.success){
+
+            if (res._hint_message !== ''){
+              Ext.toast({
+                  html: res._hint_message,
+                  title: 'Hinweis',
+                  align: 't',
+                  iconCls: 'fa fa-info-circle'
+              });
+            }
+
+            if (res._form_hide_attachments !== ''){
+              this.getComponent('mailform').getComponent('attachments').hide();
+            }
+            if (res._form_hide_from !== ''){
+              this.getComponent('mailform').getComponent('mailfrom').hide();
+            }
+
+
             this.getViewModel().getStore('attachments').setData(res.attachments);
 
             this.getComponent('mailform').getForm().setValues(res.data);
