@@ -187,15 +187,14 @@ class PUGMails implements IRoute{
                 
                 $mail->isHtml(true);
                 $mail->Subject = $data['mailsubject'];
+                $mail->Body = $data['mailbody'];
 
+                /*
                 $resMailerHTML = MailerHTML::htmlImagesToCID($data['mailbody'],App::get("tempPath"));
-                $mail->Body = $resMailerHTML['html'];
+                $mail->Body = $data['mailbody'] $resMailerHTML['html'];
                 foreach($resMailerHTML['cids'] as $cid){
                     $mail->AddEmbeddedImage($cid['file'], $cid['cid']);
                 }
-                /*
-                $mail->AddEmbeddedImage("rocks.png", "my-attach", "rocks.png");
-                $mail->Body    =  $data['mailbody'];
                 */
             
                 
