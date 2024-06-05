@@ -1,5 +1,6 @@
 <?php
 namespace Tualo\Office\Mail;
+use DOMDocument;
 
 class MailerHTML {
     public static function htmlImagesToCID($html,$path) {
@@ -40,8 +41,8 @@ class MailerHTML {
                         break;
             }
             
-            $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
-
+            
+            
             $cid[] = [
                 'file'=>$path . '/' . uniqid() . '.'.$ext,
                 'cid'=>'cid:image-' . count($cid) 
