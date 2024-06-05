@@ -12,6 +12,8 @@ use Tualo\Office\PUG\PUG;
 use Tualo\Office\RemoteBrowser\RemotePDF;
 use DOMDocument;
 use Tualo\Office\Mail\SMTP;
+use Tualo\Office\Mail\MailerHTML;
+
 class PUGMails implements IRoute{
     public static function register()
     {
@@ -185,7 +187,16 @@ class PUGMails implements IRoute{
                 
                 $mail->isHtml(true);
                 $mail->Subject = $data['mailsubject'];
-                $mail->Body    = $data['mailbody'];
+
+                $resMailerHTML = MailerHTML::htmlImagesToCID($data['mailbody'],App::get("tempPath"));
+                $mail->Body = $resMailerHTML['html'];
+                foreach($resMailerHTML['cids'] as $cid){
+                    $mail->AddEmbeddedImage($cid['file'], $cid['cid']);
+                }
+                /*
+                $mail->AddEmbeddedImage("rocks.png", "my-attach", "rocks.png");
+                $mail->Body    =  $data['mailbody'];
+                */
             
                 
                 if(!$mail->send()) {

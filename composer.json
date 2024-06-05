@@ -17,6 +17,7 @@
     },
     "minimum-stability": "dev",
     "require": {
-        "phpmailer/phpmailer": "*"
+        "phpmailer/phpmailer": "*",
+        "php-imap/php-imap": "*"
     }
 }
