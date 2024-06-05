@@ -28,7 +28,7 @@ class MailerHTML {
                         break;
             }
             $fname = $path . '/' . uniqid() . '.'.$ext;
-
+            $id = 'image-' . count($cid);
             switch ($type) {
                 case 'jpeg':
                         file_put_contents($fname, base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $src)));
@@ -45,9 +45,9 @@ class MailerHTML {
             
             $cid[] = [
                 'file'=>$fname ,
-                'cid'=>'cid:image-' . count($cid) 
+                'cid'=>$id
             ];
-            $image->setAttribute('src', 'cid:image-' . count($cid) );
+            $image->setAttribute('src', $id );
         }
         return [
             'html'=>$dom->saveHTML(), 
