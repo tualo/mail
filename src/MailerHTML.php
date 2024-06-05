@@ -44,7 +44,7 @@ class MailerHTML {
             
             
             $cid[] = [
-                'file'=>$path . '/' . uniqid() . '.'.$ext,
+                'file'=>$fname ,
                 'cid'=>'cid:image-' . count($cid) 
             ];
             $image->setAttribute('src', 'cid:image-' . count($cid) );
