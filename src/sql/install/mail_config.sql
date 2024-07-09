@@ -10,3 +10,6 @@ create table if not exists `mail_config` (
     `smtp_no_certcheck`  tinyint default 0,
     PRIMARY KEY (`id`)
 );
+
+
+create table if not exists allowed_to_mails (mail varchar(255) primary key);

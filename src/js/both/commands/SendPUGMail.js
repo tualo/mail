@@ -153,7 +153,7 @@ Ext.define('Tualo.cmp.mail.commands.SendPUGMail', {
         res = await res.json();
         if (res.success){
 
-            if (res._hint_message !== ''){
+            if ((typeof res._hint_message!="undefined") && (res._hint_message !== '')){
               Ext.toast({
                   html: res._hint_message,
                   title: 'Hinweis',
@@ -162,10 +162,10 @@ Ext.define('Tualo.cmp.mail.commands.SendPUGMail', {
               });
             }
 
-            if (res._form_hide_attachments !== ''){
+            if ((typeof res._form_hide_attachments!="undefined") && (res._form_hide_attachments !== '')){
               this.getComponent('mailform').getComponent('attachments').hide();
             }
-            if (res._form_hide_from !== ''){
+            if ((typeof res._form_hide_from!="undefined") && (res._form_hide_from !== '')){
               this.getComponent('mailform').getComponent('mailfrom').hide();
             }
 

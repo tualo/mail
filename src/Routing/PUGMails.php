@@ -169,8 +169,20 @@ class PUGMails implements IRoute{
             
                 $mail->setFrom(App::configuration('mail','force_mail_from',$data['mailfrom']));
                 $mails = explode(';',App::configuration('mail','force_mail_to',$data['mailto']));
-                
-                
+
+
+                $db = App::get('session')->getDB();
+
+                    if (App::configuration('mail','force_mail_to','')!=''){
+                        try{
+                            $allowed_to_mails = $db->direct('select mail v from allowed_to_mails where mail = {mail}',[
+                            'mail'=>$data['mailto']
+                        ],'v');
+                    }catch(\Exception $e){
+                        $allowed_to_mails = [];
+                    }
+                }
+
                 if (count($mails)>0){
                     foreach ($mails as $value) {
                         $mail->addAddress($value);
