@@ -37,51 +37,56 @@ class Spooler{
 
   public static function send() 
   {
-    foreach(self::$messages as $message) {
-        $mail = new PHPMailer(true);
-        //$mail->Debugoutput="error_log";
+    try{
+        foreach(self::$messages as $message) {
+
+            $mail = new PHPMailer(true);
+            //$mail->Debugoutput="error_log";
+            
+            // $mail->SMTPDebug =  SMTP::DEBUG_SERVER;
+            $mail->CharSet = "utf-8";
         
-        // $mail->SMTPDebug =  SMTP::DEBUG_SERVER;
-        $mail->CharSet = "utf-8";
-    
 
-        $mail->isSMTP();                                      // Set mailer to use SMTP
-        $mail->Host = self::$config['host'];  // Specify main and backup SMTP servers
-        $mail->SMTPAuth = true;                               // Enable SMTP authentication
-        $mail->Username = self::$config['username'];             // SMTP username
-        $mail->Password =  self::$config['password'];                        // SMTP password
-        $secure = self::$config['secure'];
+            $mail->isSMTP();                                      // Set mailer to use SMTP
+            $mail->Host = self::$config['host'];  // Specify main and backup SMTP servers
+            $mail->SMTPAuth = true;                               // Enable SMTP authentication
+            $mail->Username = self::$config['username'];             // SMTP username
+            $mail->Password =  self::$config['password'];                        // SMTP password
+            $secure = self::$config['secure'];
 
-        if ($secure==''){
-            $mail->SMTPSecure = false;                            // Enable TLS encryption, `ssl` also accepted
-        }else{
-            $mail->SMTPSecure = $secure;                            // Enable TLS encryption, `ssl` also accepted
-        }
-        $mail->Port = 587;                                    // TCP port to connect to
-    
-        if (self::$config['smtp_no_autotls']=='1'){
-            $mail->SMTPAutoTLS = false;
-        }
-    
-        if (self::$config['smtp_no_certcheck']=='1'){
-            $mail->SMTPOptions = array(
-                'ssl' => array(
-                    'verify_peer' => false,
-                    'verify_peer_name' => false,
-                    'allow_self_signed' => true
-                )
-            );
-        }
+            if ($secure==''){
+                $mail->SMTPSecure = false;                            // Enable TLS encryption, `ssl` also accepted
+            }else{
+                $mail->SMTPSecure = $secure;                            // Enable TLS encryption, `ssl` also accepted
+            }
+            $mail->Port = 587;                                    // TCP port to connect to
+        
+            if (self::$config['smtp_no_autotls']=='1'){
+                $mail->SMTPAutoTLS = false;
+            }
+        
+            if (self::$config['smtp_no_certcheck']=='1'){
+                $mail->SMTPOptions = array(
+                    'ssl' => array(
+                        'verify_peer' => false,
+                        'verify_peer_name' => false,
+                        'allow_self_signed' => true
+                    )
+                );
+            }
 
-        $mail->setFrom($message['from']);
-        $mail->addAddress($message['to']);
-        $mail->Subject = $message['subject'];
-        $mail->isHTML(false); 
-        $mail->Body    = $message['message'];
-        if(!$mail->send()) {
-            //echo "<b> FEHLER</b><br/>".PHP_EOL;
-        } else {
+            $mail->setFrom($message['from']);
+            $mail->addAddress($message['to']);
+            $mail->Subject = $message['subject'];
+            $mail->isHTML(false); 
+            $mail->Body    = $message['message'];
+            if(!$mail->send()) {
+                //echo "<b> FEHLER</b><br/>".PHP_EOL;
+            } else {
+            }
         }
+    }catch(\PHPMailer\PHPMailer\Exception $e){
+        //echo "<b> FEHLER</b><br/>".PHP_EOL;
     }
   }
 }
