@@ -13,6 +13,7 @@ use Tualo\Office\RemoteBrowser\RemotePDF;
 use DOMDocument;
 use Tualo\Office\Mail\SMTP;
 use Tualo\Office\Mail\MailerHTML;
+use Tualo\Office\Mail\PugMail;
 
 class PUGMails implements IRoute{
     public static function register()
@@ -153,78 +154,39 @@ class PUGMails implements IRoute{
             App::contenttype('application/json');
         }, ['put'], true);
 
+
+        BasicRoute::add('/pugmail/(?P<tablename>\w+)/(?P<id>.+)', function ($matches) {
+            $db = App::get('session')->getDB();
+            $tablename = $matches['tablename'];
+            ini_set('memory_limit', '8G');
+            try {
+                $db->direct('SET SESSION group_concat_max_len = 4294967295;');
+                //$read = DSReadRoute::read($db, $tablename, $_REQUEST);
+                $table = new DSTable($db, $tablename);
+                $data = $table->f('__id','eq',$matches['id'])->read()->getSingle();
+
+                PugMail::send($data);
+                App::result('data', $data);
+                //App::result('total', $read['total']);
+                App::result('success', true);
+            } catch (\Exception $e) {
+
+                App::result('last_sql', $db->last_sql);
+                App::result('msg', $e->getMessage());
+                //App::result('dq', implode("\n",$GLOBALS['debug_query']));
+
+            }
+
+            BasicRoute::$finished = true;
+            App::contenttype('application/json');
+        }, ['get'], true);
+
         BasicRoute::add('/mail/sendpug', function ($matches) {
             App::contenttype('application/json');
             try{
                 $db = App::get('session')->getDB();
                 $data = json_decode(file_get_contents("php://input"),true);
-                if(is_null($data)) throw new \Exception('Payload not readable');
-                if(!isset($data['mailfrom'])) throw new \Exception('Mailfrom not set');
-                if(!isset($data['mailto'])) throw new \Exception('Mailto not set');
-                if(!isset($data['mailsubject'])) throw new \Exception('Mailsubject not set');
-                if(!isset($data['mailbody'])) throw new \Exception('Mailbody not set');
-
-                
-                $mail =SMTP::get();
-            
-                $mail->setFrom(App::configuration('mail','force_mail_from',$data['mailfrom']));
-                $mails = explode(';',App::configuration('mail','force_mail_to',$data['mailto']));
-
-
-                $db = App::get('session')->getDB();
-
-                    if (App::configuration('mail','force_mail_to','')!=''){
-                        try{
-                            $allowed_to_mails = $db->direct('select mail v from allowed_to_mails where mail = {mail}',[
-                            'mail'=>$data['mailto']
-                        ],'v');
-                    }catch(\Exception $e){
-                        $allowed_to_mails = [];
-                    }
-                }
-
-                if (count($mails)>0){
-                    foreach ($mails as $value) {
-                        $mail->addAddress($value);
-                    }
-                }
-            
-                // $mail->addReplyTo($item->get('reply_to'),$item->get('reply_to_name'));
-                if (isset($data['attachments'])&&($data['attachments']!='')){
-                    foreach($data['attachments'] as $attachment){
-                        if(file_exists(App::get("tempPath").'/'.$attachment))
-                        $mail->addAttachment( App::get("tempPath").'/'.$attachment,$attachment);
-                    }
-                }
-                
-                $mail->isHtml(true);
-                $mail->Subject = $data['mailsubject'];
-                $mail->Body = $data['mailbody'];
-
-                /*
-                $resMailerHTML = MailerHTML::htmlImagesToCID($data['mailbody'],App::get("tempPath"));
-                $mail->Body = $data['mailbody'] $resMailerHTML['html'];
-                foreach($resMailerHTML['cids'] as $cid){
-                    $mail->AddEmbeddedImage($cid['file'], $cid['cid']);
-                }
-                */
-            
-                
-                if(!$mail->send()) {
-                    throw new \Exception($mail->ErrorInfo);
-                }
-
-                if(isset($data['mail_record'])){
-                    if(isset($data['mail_record']['__sendmail_callback'])){
-                        $r = $data;
-                        $r['mailto'] = implode(';',$mails);
-                        unset($r['mailbody']); // kann zu json problemen führen
-                        $db->direct('set @r = {r}',[
-                            'r'=>json_encode($r)
-                        ]);
-                        $db->direct('call `'.$data['mail_record']['__sendmail_callback'].'`(@r)');
-                    }
-                }
+                PugMail::send($data);
 
                 App::result('success', true);
             } catch (\Exception $e) {
