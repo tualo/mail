@@ -164,9 +164,59 @@ class PUGMails implements IRoute{
                 //$read = DSReadRoute::read($db, $tablename, $_REQUEST);
                 $table = new DSTable($db, $tablename);
                 $data = $table->f('__id','eq',$matches['id'])->read()->getSingle();
+                if ($data===false) throw new \Exception('Record not found');
 
-                PugMail::send($data);
-                App::result('data', $data);
+
+                if(is_null($data)) throw new \Exception('Payload not readable');
+                
+                if (!isset($data['__sendmail_template'])) throw new \Exception('Template not set');
+                if (!isset($data['__sendmail_info'])) throw new \Exception('Info not set');
+                $template=$data['__sendmail_template'];
+                
+
+                $infotable = new DSTable($db,$data['__sendmail_info']);
+
+                if (!isset($data['__sendmail_filterfields'])){
+                    $f=[];
+                    foreach($data as $key => $value) $f[] = $key;
+                    $data['__sendmail_filterfields'] = implode(',',$f);
+                }
+                $data['__sendmail_filterfields'] = explode(',',$data['__sendmail_filterfields']);
+                foreach($data as $key => $value) {
+                    if (in_array($key,$data['__sendmail_filterfields']))
+                    $infotable->filter($key,'=',$value);
+                }
+
+                    
+                $infotable->limit(1)->read();
+                if ($infotable->empty()) throw new \Exception('Info not found');
+                $info = $infotable->getSingle();
+                $info['mail_addresses']=json_decode($info['mail_addresses'],true);
+                App::result('info', $info);
+                PUG::exportPUG($db);
+
+                $html = PUG::render($template,$data);
+
+
+                $subject = '';
+                $dom = new DOMDocument();
+
+                if($dom->loadHTML($html)) {
+                    $list = $dom->getElementsByTagName("title");
+                    if ($list->length > 0) {
+                        $subject = $list->item(0)->textContent;
+                    }
+                }
+
+                $sendData = [
+                    'mailfrom'=>$db->singleValue('select getSessionUser() v',[],'v'),
+                    'mailsubject'=>$subject,
+                    'mailto'=>$info['mail_addresses'][0],
+                    'mailbody' => $html,
+                    'attachments' => [],
+                ];
+                PugMail::send($sendData);
+                App::result('data', $sendData);
                 //App::result('total', $read['total']);
                 App::result('success', true);
             } catch (\Exception $e) {
