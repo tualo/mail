@@ -165,10 +165,9 @@ class PUGMails implements IRoute{
                 $table = new DSTable($db, $tablename);
                 $data = $table->f('__id','eq',$matches['id'])->read()->getSingle();
                 if ($data===false) throw new \Exception('Record not found');
+                if (count($data)==0) throw new \Exception('Record not found');
+                if ($table->error()) throw new \Exception($table->errorMessage());
 
-
-                if(is_null($data)) throw new \Exception('Payload not readable');
-                
                 if (!isset($data['__sendmail_template'])) throw new \Exception('Template not set');
                 if (!isset($data['__sendmail_info'])) throw new \Exception('Info not set');
                 $template=$data['__sendmail_template'];
@@ -213,6 +212,7 @@ class PUGMails implements IRoute{
                     'mailsubject'=>$subject,
                     'mailto'=>$info['mail_addresses'][0],
                     'mailbody' => $html,
+                    'mail_record'=>$info,
                     'attachments' => [],
                 ];
                 PugMail::send($sendData);
