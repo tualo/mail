@@ -17,7 +17,6 @@
     },
     "minimum-stability": "dev",
     "require": {
-        "phpmailer/phpmailer": "v6.9.1",
-        "php-imap/php-imap": "^5.0.1"
+        "phpmailer/phpmailer": "v6.9.1"
     }
 }

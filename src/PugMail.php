@@ -25,11 +25,11 @@ class PugMail
 
         if (App::configuration('mail', 'force_mail_to', '') != '') {
             try {
-                $allowed_to_mails = $db->direct('select mail v from allowed_to_mails where mail = {mail}', [
+                $mails = $db->direct('select mail v from allowed_to_mails where mail = {mail}', [
                     'mail' => $data['mailto']
                 ], 'v');
             } catch (\Exception $e) {
-                $allowed_to_mails = [];
+                // $allowed_to_mails = [];
             }
         }
 

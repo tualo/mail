@@ -191,6 +191,8 @@ class PUGMails implements IRoute{
                 if ($infotable->empty()) throw new \Exception('Info not found');
                 $info = $infotable->getSingle();
                 $info['mail_addresses']=json_decode($info['mail_addresses'],true);
+
+
                 App::result('info', $info);
                 PUG::exportPUG($db);
 
@@ -215,6 +217,8 @@ class PUGMails implements IRoute{
                     'mail_record'=>$info,
                     'attachments' => [],
                 ];
+
+                $sendData = array_merge($sendData,$info);
                 PugMail::send($sendData);
                 App::result('data', $sendData);
                 //App::result('total', $read['total']);
