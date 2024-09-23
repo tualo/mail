@@ -193,6 +193,7 @@ class PUGMails implements IRoute{
                 $info['mail_addresses']=json_decode($info['mail_addresses'],true);
 
 
+                
                 App::result('info', $info);
                 PUG::exportPUG($db);
 
