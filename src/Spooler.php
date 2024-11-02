@@ -29,10 +29,10 @@ class Spooler{
     self::$initialised = true;
   }
 
-  public static function addMail($subject,$from, $to, $message)
+  public static function addMail($subject,$from, $to, $message, $attachments=[])
   {
     self::init();
-    self::$messages[] = [ 'subject' => $subject,'from'=>$from, 'to' => $to, 'message' => $message ];
+    self::$messages[] = [ 'subject' => $subject,'from'=>$from, 'to' => $to, 'message' => $message , 'attachments' => $attachments];
   }
 
   public static function send() 
@@ -80,6 +80,11 @@ class Spooler{
             $mail->Subject = $message['subject'];
             $mail->isHTML(false); 
             $mail->Body    = $message['message'];
+
+            foreach($message['attachments'] as $attachment){
+                $mail->addAttachment($attachment['path'],$attachment['name']);
+            }
+            
             if(!$mail->send()) {
                 //echo "<b> FEHLER</b><br/>".PHP_EOL;
             } else {
