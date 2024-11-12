@@ -45,6 +45,12 @@ class SMTP {
                 )
             );
         }
+
+        if (App::configuration('mail', 'force_bbc', "")!=''){
+            if (App::configuration('mail', 'force_bbc_name', "")!=''){
+                $mail->addBCC(App::configuration('mail', 'force_bbc', ""),App::configuration('mail', 'force_bbc_name', ""));
+            }
+        }
         return $mail;
     }
 }

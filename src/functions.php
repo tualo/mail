@@ -12,6 +12,7 @@ require_once "Commandline/Install.php";
 require_once "Routing/JsLoader.php";
 require_once "Routing/ListRoute.php";
 require_once "Routing/Send.php";
+// require_once "Routing/Test.php";
 require_once "Routing/PUGMails.php";
 require_once "Routing/MailLink.php";
 require_once "Routing/Outgoing.php";

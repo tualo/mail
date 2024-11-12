@@ -77,7 +77,7 @@ class PUGMails implements IRoute{
                 }
                 $attachments=[];
                 $attachment_ids = [];
-                if (isset($postdata['__pug_attachments']) && $postdata['__pug_attachments']!=''){
+                if (isset($postdata['__pug_attachments']) && $postdata['__pug_attachments']!=''  && $postdata['__pug_attachments']!='[null]' ){
 
                     $res = RemotePDF::get($postdata['__table_name'],$postdata['__pug_attachments'],$postdata['__id'],true);
                     if (isset($res['filename'])){
@@ -92,7 +92,8 @@ class PUGMails implements IRoute{
                 }
 
 
-                if (isset($postdata['__ds_files_attachments'])){
+
+                if (isset($postdata['__ds_files_attachments']) && $postdata['__ds_files_attachments']!='[null]' ){
                     if (is_string($postdata['__ds_files_attachments'])){
                         $postdata['__ds_files_attachments'] = json_decode($postdata['__ds_files_attachments'],true);
                     }
@@ -104,7 +105,7 @@ class PUGMails implements IRoute{
                         ds_files_data.data
                         from ds_files
                         join ds_files_data
-                        on ds_files.file_id = ds_files_data.file_id';
+                        on ds_files.file_id = ds_files_data.file_id and ds_files.file_id={file_id}';
                         $res = $db->singleRow($sql,['file_id'=>$file_id]);
                         if (isset($res['data'])){
                             list($mime,$data) = explode(',',$res['data']);
