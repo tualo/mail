@@ -9,7 +9,25 @@ use PHPMailer\PHPMailer\PHPMailer;
 
 
 class SMTP {
-    public static function get(): PHPMailer {
+
+    public static function get(){
+        $usemsgraph = App::configuration('mail', 'use_msgraph', '0');
+        if ($usemsgraph=='1'){
+            return self::getMSGraph();
+        }else{
+            return self::getPHPMailer();
+        }
+    }
+    public static function getMSGraph(){
+        if (class_exists('\Tualo\Office\MicrosoftMail\MSGraphMail')){
+            return \Tualo\Office\MicrosoftMail\MSGraphMail::get();
+        }else{
+            throw new \Exception('MSGraphMail not found');
+        }
+        // return \Tualo\Office\MicrosoftMail\MSGraphMail::get();
+    }
+
+    public static function getPHPMailer(): PHPMailer {
         $db = App::get('session')->getDB();
         $mail = new PHPMailer(true);
         //$mail->Debugoutput="error_log";
