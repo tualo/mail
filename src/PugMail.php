@@ -38,7 +38,7 @@ class PugMail
 
         if (count($mails) > 0) {
             foreach ($mails as $value) {
-                $mail->addAddress($value);
+                $mail->addAddress($value,'');
             }
         }
 
