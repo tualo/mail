@@ -7,22 +7,23 @@ use Tualo\Office\Basic\PostCheck;
 use Tualo\Office\Basic\TualoApplication as App;
 
 
-class StoredProcedures extends PostCheck {
+class StoredProcedures extends PostCheck
+{
 
-    
-    public static function test(array $config){
+
+    public static function test(array $config)
+    {
         $clientdb = App::get('clientDB');
         if (is_null($clientdb)) return;
         $def = [
-            'sendReportMail'=>'3c1a32b3abe38f0766fc492abdf90e11',
-            
+            'sendReportMail' => '99517983dcc32b1da94c837ee3b4a3f3',
+
         ];
         self::procedureCheck(
             'ds',
             $def,
-            "please run the following command: `./tm install-sql-mail --client ".$clientdb->dbname."`",
-            "please run the following command: `./tm install-sql-mail --client ".$clientdb->dbname."`"
+            "please run the following command: `./tm install-sql-mail --client " . $clientdb->dbname . "`",
+            "please run the following command: `./tm install-sql-mail --client " . $clientdb->dbname . "`"
         );
-        
     }
 }
