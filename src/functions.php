@@ -16,3 +16,5 @@ require_once "Routing/Send.php";
 require_once "Routing/PUGMails.php";
 require_once "Routing/MailLink.php";
 require_once "Routing/Outgoing.php";
+
+require_once "CMSMiddleware/Mail.php";
