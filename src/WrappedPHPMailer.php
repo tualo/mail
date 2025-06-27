@@ -15,6 +15,7 @@ class WrappedPHPMailer implements MailInterface
         $db = App::get('session')->getDB();
         $this->mailer = new PHPMailer();
         $this->mailer->CharSet = "utf-8";
+        $this->mailer->XMailer = App::configuration('mail', 'x_mailer', "");
 
 
         $this->mailer->isSMTP();                                      // Set mailer to use SMTP
@@ -78,9 +79,10 @@ class WrappedPHPMailer implements MailInterface
         }
     }
 
-    public function addAttachmentData($string, $filename, $encoding = 'base64', $type = '', $disposition = 'attachment')
+    public function addAttachmentData(string $path, string $content, string $contentType, string $name = "")
     {
-        $this->mailer->addStringAttachment($string, $filename, $encoding, $type, $disposition);
+        //  string $filename, $encoding = 'base64', $type = '', $disposition = 'attachment')
+        $this->mailer->addStringAttachment($content, $path, PHPMailer::ENCODING_BASE64, $contentType, $disposition = 'attachment');
     }
 
     public function addAttachment($path, $name = '', $encoding = 'base64', $type = '', $disposition = 'attachment')
@@ -126,7 +128,8 @@ class WrappedPHPMailer implements MailInterface
 
     public function setListUnsubscribePost($value)
     {
-        $this->mailer->addCustomHeader('List-Unsubscribe-Post', $value);
+        $this->mailer->addCustomHeader('List-Unsubscribe', $value);
+        // $this->mailer->addCustomHeader('List-Unsubscribe-Post', $value);
         return $this;
     }
 
