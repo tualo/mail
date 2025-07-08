@@ -16,7 +16,7 @@ class Spooler
 
 
 
-    public static function init()
+    public static function init(bool $sendOnShutdown = true)
     {
         if (self::$initialised) return;
         $db = App::get('session')->getDB();
@@ -31,7 +31,11 @@ class Spooler
         if (is_null(self::$config['host']) || self::$config['host'] == '' || self::$config['username'] == '' || self::$config['password'] == '') {
             throw new \Exception('Mail configuration not set');
         }
-        // register_shutdown_function('\Tualo\Office\Mail\Spooler::send');
+        if ($sendOnShutdown) {
+            // Register the send function to be called on shutdown
+            register_shutdown_function([self::class, 'send']);
+        }
+        //register_shutdown_function('\Tualo\Office\Mail\Spooler::send');
         self::$initialised = true;
     }
 
