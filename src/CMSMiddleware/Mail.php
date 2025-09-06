@@ -4,6 +4,7 @@ namespace Tualo\Office\Mail\CMSMiddleware;
 
 use Tualo\Office\Mail\MailInterface as MailInterface;
 use Tualo\Office\Mail\SMTP as SMTP;
+use \Tualo\Office\Mail\Spooler;
 use PHPMailer\PHPMailer\PHPMailer;
 use Tualo\Office\MicrosoftMail\MSGraphMail;
 
@@ -19,9 +20,25 @@ class Mail
         };
     }
 
+    public static function spooler(): callable
+    {
+        return function ($subject, $to, $from, $body): void {
+            Spooler::addMail(
+                $subject,
+                $to,
+                $from,
+                $body
+            );
+        };
+    }
+
+
+
+
     public static function run(&$request, &$result)
     {
         $result['mail'] = SMTP::get();
         $result['email'] = self::fn();
+        $result['spooler'] = self::spooler();
     }
 }
