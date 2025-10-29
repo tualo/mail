@@ -9,12 +9,12 @@ use Tualo\Office\Basic\IRoute;
 use Tualo\Office\DS\DSModel;
 
 
-class Send implements IRoute
+class Send extends \Tualo\Office\Basic\RouteWrapper
 {
 
     public static function register()
     {
-        
+
         BasicRoute::add('/mail/send(?P<id>(\/\d*)*)', function ($matches) {
             $db = App::get('session')->getDB();
             $id = intval(str_replace('/', '', $matches['id']));

@@ -10,7 +10,7 @@ use Tualo\Office\DS\DSModel;
 use PhpImap;
 
 
-class ListRoute implements IRoute
+class ListRoute extends \Tualo\Office\Basic\RouteWrapper
 {
 
     public static function register()
@@ -18,11 +18,12 @@ class ListRoute implements IRoute
         BasicRoute::add('/mail/list/(?P<id>\w*)', function ($matches) {
             $db = App::get('session')->getDB();
             // $id = intval(str_replace('/', '', $matches['id']));
-            phpinfo( ); exit();
+            phpinfo();
+            exit();
 
             try {
 
-               //App::showDebug(true);
+                //App::showDebug(true);
 
 
                 /*
@@ -44,7 +45,7 @@ class ListRoute implements IRoute
 
                 $mail->send();
                 */
-                
+
                 /*
                 $mailbox = new PhpImap\Mailbox(
                     '{imap.gmail.com:993/imap/ssl}INBOX', // IMAP server and mailbox folder
@@ -56,11 +57,11 @@ class ListRoute implements IRoute
                     false // Attachment filename mode (optional; false = random filename; true = original filename)
                 );
                 */
-                $config =\Tualo\Office\DS\DSTable::instance('mail_config');
-                $config->f('id','=',$matches['id']);
+                $config = \Tualo\Office\DS\DSTable::instance('mail_config');
+                $config->f('id', '=', $matches['id']);
                 $configdata = $config->read()->get();
-                foreach($configdata as $row){
-                    $server='{'.$row['smtp_host'].':993/imap/ssl}INBOX';
+                foreach ($configdata as $row) {
+                    $server = '{' . $row['smtp_host'] . ':993/imap/ssl}INBOX';
 
                     $mailbox = new PhpImap\Mailbox(
                         $server, // IMAP server and mailbox folder
@@ -76,12 +77,11 @@ class ListRoute implements IRoute
                         $mailsIds = $mailbox->searchMailbox('ALL');
 
                         App::result('mailsIds', $mailsIds);
-                    } catch(PhpImap\Exceptions\ConnectionException $ex) {
+                    } catch (PhpImap\Exceptions\ConnectionException $ex) {
                         throw new \Exception($ex->getErrors('all'));
                     }
-
                 }
-                
+
 
 
                 App::result('data', $configdata);

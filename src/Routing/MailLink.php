@@ -10,7 +10,7 @@ use Tualo\Office\Basic\IRoute;
 use Tualo\Office\DS\DSModel;
 use PHPMailer\PHPMailer\PHPMailer;
 
-class MailLink implements IRoute
+class MailLink extends \Tualo\Office\Basic\RouteWrapper
 {
 
     public static function register()
