@@ -7,8 +7,7 @@ use Tualo\Office\Mail\SMTP as SMTP;
 use \Tualo\Office\Mail\Spooler;
 use PHPMailer\PHPMailer\PHPMailer;
 use Tualo\Office\MicrosoftMail\MSGraphMail;
-
-
+use Tualo\Office\Mail\AsyncSend;
 
 class Mail
 {
@@ -32,6 +31,18 @@ class Mail
         };
     }
 
+    public static function asyncsend(): callable
+    {
+        return function ($subject, $to, $from, $body): void {
+            AsyncSend::addMail(
+                $subject,
+                $to,
+                $from,
+                $body
+            );
+        };
+    }
+
 
 
 
@@ -40,5 +51,6 @@ class Mail
         $result['mail'] = SMTP::get();
         $result['email'] = self::fn();
         $result['spooler'] = self::spooler();
+        $result['asyncmail'] = self::asyncsend();
     }
 }

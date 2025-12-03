@@ -3,6 +3,7 @@
 require_once "Compiler.php";
 require_once "SMTP.php";
 require_once "Spooler.php";
+require_once "AsyncSend.php";
 
 require_once "Checks/Tables.php";
 require_once "Checks/StoredProcedures.php";
