@@ -23,6 +23,7 @@ class AsyncSend  implements ICommandline
     public static function run(Args $args)
     {
         $clientName = $args->getOpt('client');
+        App::run();
         $session = App::get('session');
         $sessiondb = $session->db;
         $dbs = $sessiondb->direct('select username db_user, password db_pass, id db_name, host db_host, port db_port from macc_clients ');
