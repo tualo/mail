@@ -53,7 +53,8 @@ class AsyncSend
 
     public static function runCommand()
     {
-        exec('nohup ' . escapeshellarg(__DIR__ . '/../../tm mail-async-send --client ' . self::$db->dbname) . ' > /dev/null 2>&1 &');
+        chdir(dirname(__DIR__, 4));
+        exec('nohup ./tm mail-async-send --client ' . self::$db->dbname . ' > /dev/null 2>&1 &');
     }
 
     public static function send()
