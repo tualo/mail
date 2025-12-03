@@ -9,6 +9,7 @@ require_once "Checks/Tables.php";
 require_once "Checks/StoredProcedures.php";
 
 require_once "Commandline/Install.php";
+require_once "Commandline/AsyncSend.php";
 
 require_once "Routing/JsLoader.php";
 require_once "Routing/ListRoute.php";
