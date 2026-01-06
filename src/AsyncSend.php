@@ -110,8 +110,9 @@ class AsyncSend
                 $mail->setFrom($message['from']);
                 $mail->addAddress($message['to']);
                 $mail->Subject = $message['subject'];
-                $mail->isHTML(false);
+                $mail->isHTML(true);
                 $mail->Body    = $message['message'];
+                $mail->AltBody = strip_tags($message['message']);
 
                 foreach ($message['attachments'] as $attachment) {
                     $mail->addAttachment($attachment['path'], $attachment['name']);
