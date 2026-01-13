@@ -38,7 +38,7 @@ class PugMail
 
         if (count($mails) > 0) {
             foreach ($mails as $value) {
-                $mail->addAddress($value,'');
+                $mail->addAddress($value, '');
             }
         }
 
@@ -51,8 +51,8 @@ class PugMail
         }
 
         $mail->isHtml(true);
-        $mail->Subject = $data['mailsubject'];
-        $mail->Body = $data['mailbody'];
+        $mail->setBody($data['mailbody']);
+        $mail->setSubject($data['mailsubject']);
 
 
 
