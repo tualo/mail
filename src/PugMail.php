@@ -9,7 +9,7 @@ class PugMail
 {
     public static function send($data)
     {
-        if (!isset($data['mailfrom'])) throw new \Exception('Mailfrom not set');
+        // if (!isset($data['mailfrom'])) throw new \Exception('Mailfrom not set');
         if (!isset($data['mailto'])) throw new \Exception('Mailto not set');
         if (!isset($data['mailsubject'])) throw new \Exception('Mailsubject not set');
         if (!isset($data['mailbody'])) throw new \Exception('Mailbody not set');
