@@ -198,6 +198,7 @@ Ext.define('Tualo.cmp.mail.commands.SendPUGMail', {
   run: async function () {
     let me = this;
     let o = this.getComponent('mailform').getForm().getValues();
+
     o.mail_record = this.record.getData();
 
     me.getComponent('messagepanel').hide();

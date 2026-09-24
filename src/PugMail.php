@@ -38,8 +38,15 @@ class PugMail
 
         if (count($mails) > 0) {
             foreach ($mails as $value) {
-                $mail->addAddress($value, '');
+                $value = trim($value);
+                if ($value !== '') {
+                    $mail->addAddress($value, '');
+                }
             }
+        }
+
+        if (count(array_filter($mails, static fn($value) => trim($value) !== '')) === 0) {
+            throw new \Exception('No recipient address configured');
         }
 
         // $mail->addReplyTo($item->get('reply_to'),$item->get('reply_to_name'));
