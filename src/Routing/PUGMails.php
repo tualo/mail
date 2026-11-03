@@ -159,7 +159,7 @@ class PUGMails extends \Tualo\Office\Basic\RouteWrapper
             $tablename = $matches['tablename'];
             ini_set('memory_limit', '8G');
             try {
-                $db->direct('SET SESSION group_concat_max_len = 4294967295;');
+                $ // db->direct('SET SESSION group_concat_max_len = 4294967295;');
                 //$read = DSReadRoute::read($db, $tablename, $_REQUEST);
                 $table = new DSTable($db, $tablename);
                 $data = $table->f('__id', 'eq', $matches['id'])->read()->getSingle();
